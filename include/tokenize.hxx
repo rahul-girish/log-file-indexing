@@ -3,6 +3,11 @@
 #include <vector>
 #include <string>
 
+/**
+ *  str_to_lower
+ *  Convert a string to lowercase.
+ */
+
 static inline void str_to_lower(std::string& str)
 {
     for(size_t i = 0; i < str.length(); i++)
@@ -10,6 +15,11 @@ static inline void str_to_lower(std::string& str)
         str[i] = std::tolower(static_cast<unsigned char>(str[i]));
     }
 }
+
+/**
+ *  str_remove_non_alnum
+ *  Remove all non-alnum, i.e. special, characters from a string.
+ */
 
 static inline void str_remove_non_alnum(std::string& str)
 {

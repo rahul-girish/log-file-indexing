@@ -16,6 +16,20 @@ target_sources(tokenize
             include/tokenize.hxx
 )
 
+add_library(InvertedIndex)
+
+target_sources(InvertedIndex
+    PRIVATE
+    src/InvertedIndex.cxx
+
+    PUBLIC
+        FILE_SET HEADERS
+        BASE_DIRS
+            include
+        FILES
+            include/InvertedIndex.hxx
+)
+
 add_executable(main)
 
 target_sources(main
@@ -26,4 +40,5 @@ target_sources(main
 target_link_libraries(main
     PRIVATE
     tokenize
+    InvertedIndex
 )

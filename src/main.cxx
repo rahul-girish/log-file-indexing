@@ -5,8 +5,11 @@
 #include "tokenize.hxx"
 #include "InvertedIndex.hxx"
 
+
+
 int main(void)
 {
+	
 	std::string s = "Hello world 123 ABC $6%";
 	std::vector<std::string> words = tokenize(s);
 
@@ -22,6 +25,13 @@ int main(void)
 	}
 
 	print(index);
+	
+	index.merge();
+
+	std::cout << "After merging" << std::endl;
+	print(index);
+
+	
 	return 0;
 }
 

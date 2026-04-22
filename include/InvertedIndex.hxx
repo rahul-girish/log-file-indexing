@@ -26,6 +26,12 @@ public:
      */
     void add(const std::string& token, int logID);
 
+    /**
+     *  merge
+     *  Merge buffer with index
+     */
+    void merge();
+
     friend void print(const InvertedIndex& index);
     friend void print(const std::unordered_set<int>& set);
 };
@@ -38,6 +44,18 @@ void print(const std::unordered_set<int>& set);
 
 /**
  *  print
+ *  Print an std::unordered_set<int>.
+ */
+void print(const std::vector<int>& vector);
+
+/**
+ *  print
  *  Print an InvertedIndex.
  */
 void print(const InvertedIndex& index);
+
+/**
+ *  merge_and_dedup_vectors
+ *  Merge two sorted vectors and remove duplicates.
+ */
+std::vector<int> merge_and_dedup_vectors(const std::vector<int>& vector1, const std::vector<int>& vector2); 

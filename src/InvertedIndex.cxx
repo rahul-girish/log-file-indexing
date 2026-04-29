@@ -1,13 +1,110 @@
 #include "InvertedIndex.hxx"
 #include <algorithm>
 
+/**
+ *  __merge_and_dedup_vectors
+ *  Merge two sorted vectors and remove duplicates.
+ */
+static std::vector<int> __merge_and_dedup_vectors(const std::vector<int>& vector1, const std::vector<int>& vector2);
+
+/**
+ *  __intersect
+ *  Return the intersection of two std::vector<int>.
+ */
+static std::vector<int> __intersect(const std::vector<int>& a, const std::vector<int>& b)
+{
+    std::vector<int> result;
+
+    size_t i = 0, j = 0;
+
+    while(i < a.size() && j < b.size())
+    {
+        if(a[i] == b[j])
+        {
+            result.push_back(a[i]);
+            i++;
+            j++;
+        }
+        else if(a[i] < b[j])
+        {
+            i++;
+        }
+        else
+        {
+            j++;
+        }
+    }
+    return result;
+}
+
 void InvertedIndex::add(const std::string& token, int logID)
 {
     buffer[token].insert(logID);
 }
 
+const std::vector<int>& InvertedIndex::search(const std::string& token) const
+{
+    std::unordered_map<std::string, std::vector<int>>::const_iterator it = index.find(token);
+
+    static const std::vector<int> empty;
+    return (it != index.end()) ? it->second : empty;
+}
+
+std::vector<int> InvertedIndex::intersect(const std::vector<std::string>& tokens) const
+{
+    /**
+     *  This functions performs the following steps:
+     *  
+     *  1. Create a new std::vector result.
+     *  2. If there are no tokens to search for, return an empty vector.
+     *  3. For each token, get the indices and store them. If any of the tokens lacks an index, return an empty vector.
+     *  4. Sort the lists by their size.
+     *  5. Intersect the lists, breaking early if the result is ever empty.
+     */
+    std::vector<int> result;
+
+    if(tokens.empty()) 
+        return result;
+
+    std::vector<const std::vector<int>*> lists;
+
+    for(std::vector<std::string>::const_iterator token = tokens.begin(); token != tokens.end(); token++)
+    {
+        std::unordered_map<std::string, std::vector<int>>::const_iterator it = index.find(*token);
+        if (it == index.end())
+            return result;
+
+        lists.push_back(&it->second);
+    }
+
+    std::sort(lists.begin(), lists.end(), [](const std::vector<int>* a, const std::vector<int>* b) { return a->size() < b->size(); });
+
+    result = *lists[0];
+
+    for (size_t i = 1; i < lists.size(); i++)
+    {
+        const std::vector<int>& cur = *lists[i];
+        
+        result = __intersect(result, cur);
+
+        if (result.empty()) break;
+    }
+
+    return result;
+}
+
 void InvertedIndex::merge()
 {
+    /**
+     *  This function performs the following steps:
+     *  
+     *  For each item in the buffer:
+     *      1. Convert the std::unordered_set into a std::vector
+     *      2. Sort the buffer vector
+     *      3. Find the vector for the token in index, or create a new vector if the token isn't in index
+     *      4. Merge the two vectors and remove duplicates.
+     *      5. Assign the merged vector to the old index vector.
+     */
     for(std::unordered_map<std::string, std::unordered_set<int>>::iterator i = buffer.begin(); i != buffer.end(); i++)
     {
         std::string token = i->first;
@@ -19,7 +116,7 @@ void InvertedIndex::merge()
 
         std::vector<int>& index_vector = index[token];
 
-        std::vector<int> merged_vector = merge_and_dedup_vectors(index_vector, buffer_vector);
+        std::vector<int> merged_vector = __merge_and_dedup_vectors(index_vector, buffer_vector);
 
         index_vector = std::move(merged_vector);
 
@@ -84,7 +181,7 @@ void print(const InvertedIndex& index)
     }
 }
 
-std::vector<int> merge_and_dedup_vectors(const std::vector<int>& vector1, const std::vector<int>& vector2)
+std::vector<int> __merge_and_dedup_vectors(const std::vector<int>& vector1, const std::vector<int>& vector2)
 {
     std::vector<int> result;
 

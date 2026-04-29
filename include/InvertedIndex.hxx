@@ -27,6 +27,20 @@ public:
     void add(const std::string& token, int logID);
 
     /**
+     *  search
+     *  Find the logIDs for a given token
+     *  Returns an empty vector if not found. 
+     */
+    const std::vector<int>& search(const std::string& token) const;
+
+    /**
+     *  intersect
+     *  Return a vector containing the intersection of all vectors that belong to tokens
+     *
+     */
+    std::vector<int> intersect(const std::vector<std::string>& tokens) const;
+
+    /**
      *  merge
      *  Merge buffer with index
      */
@@ -44,7 +58,7 @@ void print(const std::unordered_set<int>& set);
 
 /**
  *  print
- *  Print an std::unordered_set<int>.
+ *  Print an std::vector<int>.
  */
 void print(const std::vector<int>& vector);
 
@@ -53,9 +67,3 @@ void print(const std::vector<int>& vector);
  *  Print an InvertedIndex.
  */
 void print(const InvertedIndex& index);
-
-/**
- *  merge_and_dedup_vectors
- *  Merge two sorted vectors and remove duplicates.
- */
-std::vector<int> merge_and_dedup_vectors(const std::vector<int>& vector1, const std::vector<int>& vector2); 

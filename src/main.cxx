@@ -5,7 +5,8 @@
 #include "tokenize.hxx"
 #include "InvertedIndex.hxx"
 
-
+#include "search_naive.hxx"
+#include "search_kmp.hxx"
 
 int main(void)
 {
@@ -43,7 +44,7 @@ int main(void)
 	index.merge();
 	print(index);
 
-	std::vector<int> res = index.search("123");
+	std::vector<size_t> res = index.search("123");
 	std::cout << "Result of search for \"123\": ";
 	print(res);
 	std::cout << std::endl;
@@ -56,7 +57,14 @@ int main(void)
 	std::vector<std::string> s1 = {"123", "world"};
 	res = index.intersect(s1);
 	print(res);
-	
+
+	std::string s2 = "hello world old cold sold";
+	std::cout << s2 << std::endl;
+	print(search_naive(s2, "ld"));
+	std::cout << std::endl;
+	std::vector<size_t> r = search_kmp(s2, "ld");
+	print(r);
+	std::cout << std::endl;
+
 	return 0;
 }
-

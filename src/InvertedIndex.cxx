@@ -5,15 +5,15 @@
  *  __merge_and_dedup_vectors
  *  Merge two sorted vectors and remove duplicates.
  */
-static std::vector<int> __merge_and_dedup_vectors(const std::vector<int>& vector1, const std::vector<int>& vector2);
+static std::vector<size_t> __merge_and_dedup_vectors(const std::vector<size_t>& vector1, const std::vector<size_t>& vector2);
 
 /**
  *  __intersect
  *  Return the intersection of two std::vector<int>.
  */
-static std::vector<int> __intersect(const std::vector<int>& a, const std::vector<int>& b)
+static std::vector<size_t> __intersect(const std::vector<size_t>& a, const std::vector<size_t>& b)
 {
-    std::vector<int> result;
+    std::vector<size_t> result;
 
     size_t i = 0, j = 0;
 
@@ -37,20 +37,20 @@ static std::vector<int> __intersect(const std::vector<int>& a, const std::vector
     return result;
 }
 
-void InvertedIndex::add(const std::string& token, int logID)
+void InvertedIndex::add(const std::string& token, size_t logID)
 {
     buffer[token].insert(logID);
 }
 
-const std::vector<int>& InvertedIndex::search(const std::string& token) const
+const std::vector<size_t>& InvertedIndex::search(const std::string& token) const
 {
-    std::unordered_map<std::string, std::vector<int>>::const_iterator it = index.find(token);
+    std::unordered_map<std::string, std::vector<size_t>>::const_iterator it = index.find(token);
 
-    static const std::vector<int> empty;
+    static const std::vector<size_t> empty;
     return (it != index.end()) ? it->second : empty;
 }
 
-std::vector<int> InvertedIndex::intersect(const std::vector<std::string>& tokens) const
+std::vector<size_t> InvertedIndex::intersect(const std::vector<std::string>& tokens) const
 {
     /**
      *  This functions performs the following steps:
@@ -61,29 +61,29 @@ std::vector<int> InvertedIndex::intersect(const std::vector<std::string>& tokens
      *  4. Sort the lists by their size.
      *  5. Intersect the lists, breaking early if the result is ever empty.
      */
-    std::vector<int> result;
+    std::vector<size_t> result;
 
     if(tokens.empty()) 
         return result;
 
-    std::vector<const std::vector<int>*> lists;
+    std::vector<const std::vector<size_t>*> lists;
 
     for(std::vector<std::string>::const_iterator token = tokens.begin(); token != tokens.end(); token++)
     {
-        std::unordered_map<std::string, std::vector<int>>::const_iterator it = index.find(*token);
+        std::unordered_map<std::string, std::vector<size_t>>::const_iterator it = index.find(*token);
         if (it == index.end())
             return result;
 
         lists.push_back(&it->second);
     }
 
-    std::sort(lists.begin(), lists.end(), [](const std::vector<int>* a, const std::vector<int>* b) { return a->size() < b->size(); });
+    std::sort(lists.begin(), lists.end(), [](const std::vector<size_t>* a, const std::vector<size_t>* b) { return a->size() < b->size(); });
 
     result = *lists[0];
 
     for (size_t i = 1; i < lists.size(); i++)
     {
-        const std::vector<int>& cur = *lists[i];
+        const std::vector<size_t>& cur = *lists[i];
         
         result = __intersect(result, cur);
 
@@ -105,18 +105,18 @@ void InvertedIndex::merge()
      *      4. Merge the two vectors and remove duplicates.
      *      5. Assign the merged vector to the old index vector.
      */
-    for(std::unordered_map<std::string, std::unordered_set<int>>::iterator i = buffer.begin(); i != buffer.end(); i++)
+    for(std::unordered_map<std::string, std::unordered_set<size_t>>::iterator i = buffer.begin(); i != buffer.end(); i++)
     {
         std::string token = i->first;
-        std::unordered_set<int>& set = i->second;
+        std::unordered_set<size_t>& set = i->second;
 
-        std::vector<int> buffer_vector(set.begin(), set.end());
+        std::vector<size_t> buffer_vector(set.begin(), set.end());
 
         std::sort(buffer_vector.begin(), buffer_vector.end());
 
-        std::vector<int>& index_vector = index[token];
+        std::vector<size_t>& index_vector = index[token];
 
-        std::vector<int> merged_vector = __merge_and_dedup_vectors(index_vector, buffer_vector);
+        std::vector<size_t> merged_vector = __merge_and_dedup_vectors(index_vector, buffer_vector);
 
         index_vector = std::move(merged_vector);
 
@@ -126,12 +126,12 @@ void InvertedIndex::merge()
     buffer.clear();
 }
 
-void print(const std::unordered_set<int>& set)
+void print(const std::unordered_set<size_t>& set)
 {
     bool first = true;
     std::cout << "{";
 
-    for(std::unordered_set<int>::const_iterator i = set.begin(); i != set.end(); i++)
+    for(std::unordered_set<size_t>::const_iterator i = set.begin(); i != set.end(); i++)
     {
         if (!first)
             std::cout << ", ";
@@ -142,12 +142,12 @@ void print(const std::unordered_set<int>& set)
     std::cout << "}";        
 }
 
-void print(const std::vector<int>& vector)
+void print(const std::vector<size_t>& vector)
 {
     bool first = true;
     std::cout << "{";
 
-    for(std::vector<int>::const_iterator i = vector.begin(); i != vector.end(); i++)
+    for(std::vector<size_t>::const_iterator i = vector.begin(); i != vector.end(); i++)
     {
         if (!first)
             std::cout << ", ";
@@ -160,20 +160,20 @@ void print(const std::vector<int>& vector)
 
 void print(const InvertedIndex& index)
 {
-    const std::unordered_map<std::string, std::unordered_set<int>>& buffer = index.buffer;
+    const std::unordered_map<std::string, std::unordered_set<size_t>>& buffer = index.buffer;
 
     std::cout << "Buffer:" << std::endl;
-    for (std::unordered_map<std::string, std::unordered_set<int>>::const_iterator i = buffer.begin(); i != buffer.end(); i++)
+    for (std::unordered_map<std::string, std::unordered_set<size_t>>::const_iterator i = buffer.begin(); i != buffer.end(); i++)
     {
         std::cout << "\"" << i->first << "\" : "; 
         print(i->second); 
         std::cout << std::endl;
     }
 
-    const std::unordered_map<std::string, std::vector<int>>& storage = index.index;
+    const std::unordered_map<std::string, std::vector<size_t>>& storage = index.index;
 
     std::cout << "Index:" << std::endl;
-    for (std::unordered_map<std::string, std::vector<int>>::const_iterator i = storage.begin(); i != storage.end(); i++)
+    for (std::unordered_map<std::string, std::vector<size_t>>::const_iterator i = storage.begin(); i != storage.end(); i++)
     {
         std::cout << "\"" << i->first << "\" : "; 
         print(i->second); 
@@ -181,9 +181,9 @@ void print(const InvertedIndex& index)
     }
 }
 
-std::vector<int> __merge_and_dedup_vectors(const std::vector<int>& vector1, const std::vector<int>& vector2)
+std::vector<size_t> __merge_and_dedup_vectors(const std::vector<size_t>& vector1, const std::vector<size_t>& vector2)
 {
-    std::vector<int> result;
+    std::vector<size_t> result;
 
     if(vector1.empty() && vector2.empty())
         return result;

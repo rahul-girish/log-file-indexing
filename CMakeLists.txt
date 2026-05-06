@@ -16,6 +16,34 @@ target_sources(tokenize
             include/tokenize.hxx
 )
 
+add_library(search_naive)
+
+target_sources(search_naive
+    PRIVATE
+    src/search_naive.cxx
+    
+    PUBLIC
+        FILE_SET HEADERS
+        BASE_DIRS
+            include
+        FILES
+            include/search_naive.hxx
+)
+
+add_library(search_kmp)
+
+target_sources(search_kmp
+    PRIVATE
+    src/search_kmp.cxx
+    
+    PUBLIC
+        FILE_SET HEADERS
+        BASE_DIRS
+            include
+        FILES
+            include/search_kmp.hxx
+)
+
 add_library(InvertedIndex)
 
 target_sources(InvertedIndex
@@ -41,4 +69,6 @@ target_link_libraries(main
     PRIVATE
     tokenize
     InvertedIndex
+    search_naive
+    search_kmp
 )

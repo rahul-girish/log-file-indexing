@@ -16,29 +16,29 @@
 class InvertedIndex
 {
 private:
-    std::unordered_map<std::string, std::vector<int>> index;
-    std::unordered_map<std::string, std::unordered_set<int>> buffer;
+    std::unordered_map<std::string, std::vector<size_t>> index;
+    std::unordered_map<std::string, std::unordered_set<size_t>> buffer;
 
 public:
     /**
      *  add
      *  Adds an ID to the buffer for the corresponding token.
      */
-    void add(const std::string& token, int logID);
+    void add(const std::string& token, size_t logID);
 
     /**
      *  search
      *  Find the logIDs for a given token
      *  Returns an empty vector if not found. 
      */
-    const std::vector<int>& search(const std::string& token) const;
+    const std::vector<size_t>& search(const std::string& token) const;
 
     /**
      *  intersect
      *  Return a vector containing the intersection of all vectors that belong to tokens
      *
      */
-    std::vector<int> intersect(const std::vector<std::string>& tokens) const;
+    std::vector<size_t> intersect(const std::vector<std::string>& tokens) const;
 
     /**
      *  merge
@@ -47,20 +47,20 @@ public:
     void merge();
 
     friend void print(const InvertedIndex& index);
-    friend void print(const std::unordered_set<int>& set);
+    friend void print(const std::unordered_set<size_t>& set);
 };
 
 /**
  *  print
  *  Print an std::unordered_set<int>.
  */
-void print(const std::unordered_set<int>& set);
+void print(const std::unordered_set<size_t>& set);
 
 /**
  *  print
- *  Print an std::vector<int>.
+ *  Print an std::vector<size_t>.
  */
-void print(const std::vector<int>& vector);
+void print(const std::vector<size_t>& vector);
 
 /**
  *  print
